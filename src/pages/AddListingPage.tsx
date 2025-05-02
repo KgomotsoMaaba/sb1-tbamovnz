@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Upload, X } from 'lucide-react';
+import { Upload, X, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 const provinces = [
@@ -37,7 +37,8 @@ const initialFormData = {
   address: '',
   website_url: '',
   image_url: '',
-  category: ''
+  category: '',
+  rating: ''
 };
 
 const AddListingPage: React.FC = () => {
@@ -110,12 +111,21 @@ const AddListingPage: React.FC = () => {
     return phoneRegex.test(number.replace(/\s+/g, ''));
   };
 
-  const getValidationError = (field: 'email' | 'number'): string | undefined => {
+  const validateRating = (rating: string): boolean => {
+    if (!rating) return true;
+    const ratingNum = parseFloat(rating);
+    return !isNaN(ratingNum) && ratingNum >= 1 && ratingNum <= 5;
+  };
+
+  const getValidationError = (field: 'email' | 'number' | 'rating'): string | undefined => {
     if (field === 'email' && formData.email && !validateEmail(formData.email)) {
       return 'Please enter a valid email address';
     }
     if (field === 'number' && formData.number && !validatePhoneNumber(formData.number)) {
       return 'Please enter a valid South African phone number (e.g., 0123456789 or +27123456789)';
+    }
+    if (field === 'rating' && formData.rating && !validateRating(formData.rating)) {
+      return 'Please enter a rating between 1 and 5';
     }
     return undefined;
   };
@@ -169,6 +179,7 @@ const AddListingPage: React.FC = () => {
       setError(null);
       const listing = {
         ...formData,
+        rating: formData.rating ? parseFloat(formData.rating) : null,
         user_id: session.user.id
       };
 
@@ -177,7 +188,7 @@ const AddListingPage: React.FC = () => {
           .from('business_listings')
           .update(listing)
           .eq('id', id)
-          .eq('user_id', session.user.id); // Add user_id check for extra security
+          .eq('user_id', session.user.id);
 
         if (updateError) throw updateError;
       } else {
@@ -212,15 +223,17 @@ const AddListingPage: React.FC = () => {
 
     const validEmail = validateEmail(formData.email);
     const validPhone = validatePhoneNumber(formData.number);
+    const validRating = validateRating(formData.rating);
 
     return requiredFields && 
            (!formData.email || validEmail) && 
-           (!formData.number || validPhone) && 
+           (!formData.number || validPhone) &&
+           (!formData.rating || validRating) &&
            !uploading;
   };
 
   if (!session) {
-    return null; // Don't render anything while checking auth status
+    return null;
   }
 
   return (
@@ -393,6 +406,34 @@ const AddListingPage: React.FC = () => {
                 <X size={16} />
               </button>
             </div>
+          )}
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Google Reviews Rating</label>
+          <div className="relative">
+            <input
+              type="text"
+              value={formData.rating}
+              onChange={(e) => {
+                const value = e.target.value;
+                if (value === '' || (/^\d*\.?\d*$/.test(value) && parseFloat(value) <= 5)) {
+                  setFormData(prev => ({ ...prev, rating: value }));
+                }
+              }}
+              placeholder="Enter rating (1-5)"
+              className={`w-full p-2 pr-8 border rounded-lg text-gray-800 dark:text-white bg-white dark:bg-gray-700 border-gray-300 dark:border-gray-600 focus:ring-2 focus:ring-accent-500 focus:border-transparent ${
+                getValidationError('rating') ? 'border-red-500' : ''
+              }`}
+            />
+            <Star
+              size={16}
+              className="absolute right-2 top-1/2 -translate-y-1/2 text-yellow-400"
+              fill="currentColor"
+            />
+          </div>
+          {getValidationError('rating') && (
+            <p className="text-red-500 text-xs mt-1">{getValidationError('rating')}</p>
           )}
         </div>
 
