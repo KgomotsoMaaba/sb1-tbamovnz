@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Plus, Edit2, Trash2, ExternalLink } from 'lucide-react';
+import { Plus, Edit2, Trash2, ExternalLink, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import AuthButton from '../components/auth/AuthButton';
 import { SearchBar } from '../components/search/SearchBar';
@@ -18,6 +18,7 @@ interface BusinessListing {
   website_url: string;
   category: string;
   user_id: string;
+  rating: number | null;
 }
 
 const DirectoryPage: React.FC = () => {
@@ -204,22 +205,31 @@ const DirectoryPage: React.FC = () => {
                   <ExternalLink size={16} className="ml-1" />
                 </button>
 
-                {session?.user.id === listing.user_id && (
-                  <div className="flex space-x-2">
-                    <button
-                      onClick={() => navigate(`/directory/edit/${listing.id}`)}
-                      className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
-                    >
-                      <Edit2 size={16} />
-                    </button>
-                    <button
-                      onClick={() => confirmDelete(listing.id)}
-                      className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600"
-                    >
-                      <Trash2 size={16} />
-                    </button>
-                  </div>
-                )}
+                <div className="flex items-center space-x-4">
+                  {listing.rating && (
+                    <div className="flex items-center">
+                      <span className="mr-1 font-bold text-gray-800 dark:text-white">{listing.rating}</span>
+                      <Star size={16} className="text-yellow-400" fill="currentColor" />
+                    </div>
+                  )}
+
+                  {session?.user.id === listing.user_id && (
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => navigate(`/directory/edit/${listing.id}`)}
+                        className="p-2 text-gray-600 hover:text-gray-800 dark:text-gray-400 dark:hover:text-gray-200"
+                      >
+                        <Edit2 size={16} />
+                      </button>
+                      <button
+                        onClick={() => confirmDelete(listing.id)}
+                        className="p-2 text-red-600 hover:text-red-800 dark:text-red-400 dark:hover:text-red-600"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </div>

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, Phone, Mail, Globe, ArrowLeft } from 'lucide-react';
+import { MapPin, Phone, Mail, Globe, ArrowLeft, Star } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 
 interface BusinessListing {
@@ -16,6 +16,7 @@ interface BusinessListing {
   website_url: string;
   category: string;
   user_id: string;
+  rating: number | null;
 }
 
 const ListingPage: React.FC = () => {
@@ -101,9 +102,17 @@ const ListingPage: React.FC = () => {
               className="w-full h-full object-cover"
             />
             <div className="absolute top-0 left-0 right-0 p-6 bg-gradient-to-b from-black/50 to-transparent">
-              <span className="inline-block px-3 py-1 bg-accent-500 text-white rounded-full text-sm">
-                {listing.category}
-              </span>
+              <div className="flex justify-between items-center">
+                <span className="inline-block px-3 py-1 bg-accent-500 text-white rounded-full text-sm">
+                  {listing.category}
+                </span>
+                {listing.rating && (
+                  <div className="flex items-center bg-white/90 dark:bg-gray-800/90 px-3 py-1 rounded-full">
+                    <span className="font-bold text-gray-800 dark:text-white mr-1">{listing.rating}</span>
+                    <Star size={16} className="text-yellow-400" fill="currentColor" />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         )}
