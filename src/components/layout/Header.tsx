@@ -5,7 +5,7 @@ import AuthButton from '../auth/AuthButton';
 import { Link, useNavigate } from 'react-router-dom';
 
 const Header: React.FC = () => {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
@@ -15,7 +15,7 @@ const Header: React.FC = () => {
 
   return (
     <header className="fixed w-full z-50 bg-primary-100/95 backdrop-blur-sm dark:bg-gray-800/95 shadow-sm transition-colors duration-200">
-      <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+      <div className="container mx-auto px-4 py-2 flex justify-between items-center">
         <div className="flex items-center">
           <Calendar 
             size={28}
