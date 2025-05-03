@@ -1,5 +1,5 @@
 import React from 'react';
-import { Calendar, Mail, Phone, MapPin } from 'lucide-react';
+import { Mail, Phone, MapPin, Calendar } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Footer: React.FC = () => {
@@ -11,7 +11,10 @@ const Footer: React.FC = () => {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="animate-fade-in">
             <div className="flex items-center mb-4">
-              <Calendar className="text-accent-800 dark:text-accent-400 mr-2" size={24} />
+              <Calendar 
+                size={24}
+                className="text-accent-800 dark:text-accent-400 mr-2"
+              />
               <h2 className="font-heading font-semibold text-xl text-accent-800 dark:text-accent-400">
                 Open<span className="text-secondary-400">Calendar</span>
               </h2>

@@ -1,5 +1,5 @@
-import React from 'react';
-import { Calendar, Menu, X, Sun, Moon } from 'lucide-react';
+import React, { useState } from 'react';
+import { Menu, X, Sun, Moon, Calendar } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
 import AuthButton from '../auth/AuthButton';
 import { Link, useNavigate } from 'react-router-dom';
@@ -17,14 +17,17 @@ const Header: React.FC = () => {
     <header className="fixed w-full z-50 bg-primary-100/95 backdrop-blur-sm dark:bg-gray-800/95 shadow-sm transition-colors duration-200">
       <div className="container mx-auto px-4 py-4 flex justify-between items-center">
         <div className="flex items-center">
-          <Calendar className="text-accent-800 dark:text-accent-400 mr-2" size={28} />
+          <Calendar 
+            size={28}
+            className="text-accent-800 dark:text-accent-400 mr-2"
+          />
           <Link to="/" className="font-heading font-semibold text-2xl text-accent-800 dark:text-accent-400">
             Open<span className="text-secondary-400">Calendar</span>
           </Link>
         </div>
         
         <nav className="hidden md:block">
-          <ul className="flex space-x-8 font-heading">
+          <ul className="flex space-x-8 font-heading text-[14px]">
             <li>
               <Link to="/" className="text-textPrimary dark:text-primary-100 hover:text-accent-700 dark:hover:text-accent-400 transition-colors">
                 Calendar
@@ -71,7 +74,7 @@ const Header: React.FC = () => {
       {/* Mobile menu */}
       {isMenuOpen && (
         <div className="md:hidden bg-primary-50 dark:bg-gray-800 animate-slide-down">
-          <ul className="container mx-auto px-4 py-4 space-y-4 font-heading">
+          <ul className="container mx-auto px-4 py-4 space-y-4 font-heading text-[14px]">
             <li>
               <Link to="/" className="block px-4 py-2 rounded hover:bg-primary-100 dark:hover:bg-gray-700 transition-colors">
                 Calendar

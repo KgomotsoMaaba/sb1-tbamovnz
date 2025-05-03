@@ -21,6 +21,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, type, className 
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [retrying, setRetrying] = useState(false);
+  const [connectionStatus, setConnectionStatus] = useState<boolean | null>(null);
   
   const debouncedQuery = useDebounce(query, 300);
   const debouncedFilters = useDebounce(filters, 300);
@@ -35,6 +36,8 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, type, className 
     try {
       // Test connection before proceeding
       const isConnected = await testConnection();
+      setConnectionStatus(isConnected);
+      
       if (!isConnected) {
         throw new Error('Unable to connect to the database. Please check your internet connection and try again.');
       }
@@ -45,7 +48,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, type, className 
         .order('created_at', { ascending: false });
 
       if (debouncedQuery) {
-        queryBuilder = queryBuilder.or(`name.ilike.%${debouncedQuery}%,description.ilike.%${debouncedQuery}%,location.ilike.%${debouncedQuery}%`);
+        queryBuilder = queryBuilder.or(`name.ilike.%${debouncedQuery}%,description.ilike.%${debouncedQuery}%${type === 'listings' ? ',location.ilike.%' + debouncedQuery + '%' : ''}`);
       }
       
       if (debouncedFilters.category) {
@@ -68,7 +71,7 @@ export const SearchBar: React.FC<SearchBarProps> = ({ onSearch, type, className 
       const { data, error: queryError } = await queryBuilder;
 
       if (queryError) {
-        if (queryError.message.includes('Failed to fetch') || queryError.message.includes('No API key found')) {
+        if (queryError.message.includes('Failed to fetch') || queryError.message.includes('NetworkError')) {
           throw new Error('Connection error. Please check your internet connection and try again.');
         }
         throw queryError;

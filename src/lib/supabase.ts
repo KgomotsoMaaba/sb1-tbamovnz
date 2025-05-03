@@ -28,21 +28,41 @@ export const supabase = createClient(supabaseUrl, supabaseAnonKey, {
   },
   db: {
     schema: 'public'
+  },
+  global: {
+    headers: {
+      'X-Client-Info': 'supabase-js-web'
+    }
   }
 });
 
-// Test connection with retries
-export const testConnection = async (retries = 3, delay = 1000) => {
+// Test connection with retries and better error handling
+export const testConnection = async (retries = 3, delay = 1000): Promise<boolean> => {
   for (let attempt = 1; attempt <= retries; attempt++) {
     try {
-      const { data, error } = await supabase.from('business_listings').select('id').limit(1);
+      const { error } = await supabase.from('business_listings').select('count').single();
+      
       if (error) {
-        console.warn(`Connection attempt ${attempt} failed:`, error);
-        if (attempt === retries) throw error;
+        if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+          console.warn(`Network error on attempt ${attempt}:`, error);
+          if (attempt === retries) {
+            console.error('Network connection failed after all retries');
+            return false;
+          }
+        } else if (error.message.includes('JWT')) {
+          console.error('Authentication error:', error);
+          return false;
+        } else {
+          console.warn(`Database error on attempt ${attempt}:`, error);
+          if (attempt === retries) {
+            console.error('Database connection failed after all retries');
+            return false;
+          }
+        }
       } else {
         return true;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.warn(`Connection attempt ${attempt} failed:`, error);
       if (attempt === retries) {
         console.error('All connection attempts failed');
