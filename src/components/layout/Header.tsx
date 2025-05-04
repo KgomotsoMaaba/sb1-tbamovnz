@@ -18,10 +18,10 @@ const Header: React.FC = () => {
       <div className="container mx-auto px-4 py-2 flex justify-between items-center">
         <div className="flex items-center">
           <Calendar 
-            size={28}
+            size={16}
             className="text-accent-800 dark:text-accent-400 mr-2"
           />
-          <Link to="/" className="font-heading font-semibold text-2xl text-accent-800 dark:text-accent-400">
+          <Link to="/" className="font-heading text-base text-accent-800 dark:text-accent-400">
             Open<span className="text-secondary-400">Calendar</span>
           </Link>
         </div>
